@@ -32,11 +32,15 @@ describe("Unit tests", function () {
     // set admin account/signer
     const signers = await hre.ethers.getSigners();
     this.signers.admin = signers[0];
-    this.user1 = signers[1];
+    this.user1 = signers[2];
+
+    // print admin and user1
+    console.log("Admin: ", this.signers.admin.address);
+    console.log("User1: ", this.user1.address);
 
     const tx = await this.signers.admin.sendTransaction({
       to: this.user1.address,
-      value: parseEther("1.0"),
+      value: parseEther("0.1"),
     });
   });
 
@@ -49,14 +53,21 @@ describe("Unit tests", function () {
     });
 
     it("Should allow me to vote", async function () {
-      let encrypted3 = await this.instance.instance.encrypt(3, EncryptionTypes.uint8);
+      let encrypted3 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
 
       await this.voting.connect(this.signers.admin).vote(encrypted3)
 
-      // let encrypted1 = await this.instance.instance.encrypt(0, EncryptionTypes.uint8);
-      await this.voting.connect(this.user1).vote(encrypted3)
+      let encrypted1 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
+      await this.voting.connect(this.user1).vote(encrypted1)
 
-      // console.log("sleeping for 1 seconds")
+      // check if admin and user1 are able to vote
+      const canAdminVote = await this.voting.voters(this.signers.admin.address);
+      const canUser1Vote = await this.voting.voters(this.user1.address);
+
+      console.log("Can admin vote: ", canAdminVote.toString());
+      console.log("Can user1 vote: ", canUser1Vote.toString());
+
+      console.log("sleeping for 1 second")
       await sleep(1000);
       await this.voting.finalize()
 

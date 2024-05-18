@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause-Clear
+// WARNING THIS IS An EXPERIMENTAL CONTRACT AND IS NOT READY FOR PRODUCTION USE
 
 pragma solidity >=0.8.19 <0.9.0;
 
@@ -22,17 +23,28 @@ contract Voting is Permissioned {
     euint8 internal _winningOption;
     euint16 internal _winningTally;
 
+    mapping(address => bool) public voters;
+
     mapping(address => euint8) internal _votes;
 
-    constructor(string memory _proposal, string[] memory _options, uint votingPeriod) {
+    constructor(string memory _proposal, string[] memory _options, uint votingPeriod, address[] memory _voters) {
         require(options.length <= MAX_OPTIONS, "too many options!");
 
         proposal = _proposal;
         options = _options;
         voteEndTime = block.timestamp + votingPeriod;
+
+        for (uint i = 0; i < _voters.length; i++) {
+            voters[_voters[i]] = true;
+        }
     }
 
     function vote(inEuint8 memory voteBytes) public {
+        // require voter to be in the list of voters
+        if(voters[msg.sender] == false) {
+            revert("You are not allowed to vote!");
+        }
+
         //require(block.timestamp < voteEndTime, "voting is over!");
         require(!FHE.isInitialized(_votes[msg.sender]), "already voted!");
         euint8 encryptedVote = FHE.asEuint8(voteBytes); // Cast bytes into an encrypted type

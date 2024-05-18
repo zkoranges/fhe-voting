@@ -10,9 +10,7 @@ export async function deployVotingFixture(): Promise<{
   const contractOwner = accounts[0];
 
   const Voting = await hre.ethers.getContractFactory("Voting");
-  const voting = await Voting.connect(contractOwner).deploy("Proposal", ["Option 1", "Option 2","Option 3","Option 4"], 0);
-
-  // constructor(string memory _proposal, string[] memory _options, uint votingPeriod) {
+  const voting = await Voting.connect(contractOwner).deploy("Proposal", ["Option 1", "Option 2", "Option 3", "Option 4"], 0, ["0xd7702EB6Ca4C101C918f7d4eaBeDc36e36260482", "0x4605eC2552cB2433A9b4B83881dd2473C709b4e8"]);
 
   await voting.waitForDeployment();
   const address = await voting.getAddress();
