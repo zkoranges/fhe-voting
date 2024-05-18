@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { useReadContract } from 'wagmi';
+import { useBlockNumber, useChainId, useReadContract } from 'wagmi';
 import Link from 'next/link';
 
 import { votingAddress } from '@/config/wagmiConfig';
@@ -9,6 +9,7 @@ import votingAbi from '../abi/Voting.json';
 import { ethers } from 'ethers';
 import { FhenixClient } from 'fhenixjs';
 import { useEthersProvider, useEthersSigner } from '../utils/viemEthersConverters'; // Adjust the import path as needed
+import type { SupportedProvider } from "fhenixjs";
 
 //// START OF THE COMPONENT //// 
 export default function LandingPage() {
@@ -18,7 +19,12 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [fheClient, setFheClient] = useState(null);
+  const [isFinalized, setIsFinalized] = useState(false);
+  const [winningValues, setWinningValues] = useState({ uint8Value: null, uint16Value: null });
 
+
+  const { data: blockNumberData } = useBlockNumber({ watch: true });
+  const chainId = useChainId();
 
   // Can we get a provider and signer please? 
   const signer = useEthersSigner()
@@ -53,8 +59,9 @@ export default function LandingPage() {
         }
         
         if (fheClient !== null) {
-          const uint8Array = (await fheClient.encrypt_uint8(value)).data;
-          return `0x${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join('')}`;
+          const uint8Array = (await fheClient.encrypt_uint8(value));
+          return uint8Array;
+          // return `0x${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join('')}`;
         }
       }
     } catch (err) {
@@ -101,16 +108,34 @@ export default function LandingPage() {
     console.log("Voting contract:", votingContract)
     console.log("Signer:", signer)
     console.log("Encrypted vote:", encryptedVote)
-    const tx = await votingContract.connect(signer).vote(encryptedVote);
+    await votingContract.connect(signer).vote(encryptedVote);
 
     // Set the submitted state to true
     setIsSubmitted(true);
   };
 
 
-  const handleFinalizeVoting = () => {
+  const handleFinalizeVoting = async () => {
     // Add the logic to finalize the voting process
     console.log('Finalize Voting button clicked');
+    // await votingContract.connect(signer).finalize();
+    const tx = await votingContract.connect(signer).finalize();
+    await tx.wait();
+    console.log("Voting finalized:", tx);
+
+    setIsFinalized(true); // Update the state to indicate voting is finalized
+
+    fetchWinningValues()
+  };
+
+  const fetchWinningValues = async () => {
+    try {
+      const [uint8Value, uint16Value] = await votingContract.winning();
+      setWinningValues({ uint8Value, uint16Value });
+      console.log("Winning values:", { uint8Value, uint16Value });
+    } catch (error) {
+      console.error("Error fetching winning values:", error);
+    }
   };
 
   return (
@@ -184,8 +209,36 @@ export default function LandingPage() {
         )}
 
         {/* Footer */}
-        <Footer votingAddress={votingAddress} />
-      </main>
+        <div className='fixed bottom-0 w-full flex justify-center p-4 bg-gradient-to-b '>
+      <div className='flex space-x-5'>
+        <p className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center text-xs'>
+          Voting Contract: {votingAddress}
+        </p>
+        <div className='rounded-xl text-xs border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex flex-col'>
+          <p>Watching Blocks on {chainId ? chainId : 'Loading...'}</p>
+          <div className='flex items-center justify-center space-x-2'>
+            <div className='relative'>
+              <div
+                className={`absolute inline-flex h-full w-full rounded-full ${
+                  blockNumberData ? 'bg-green-500' : 'bg-orange-500'
+                } opacity-75 animate-ping`}
+              ></div>
+              <div
+                className={`relative h-2 w-2 rounded-full ${blockNumberData ? 'bg-green-500' : 'bg-orange-500'}`}
+              ></div>
+            </div>
+            <p>{blockNumberData ? Number(blockNumberData) : 'Loading...'}</p>
+          </div>
+        </div>
+        <button
+          onClick={handleFinalizeVoting}
+          className='rounded-xl text-xs border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center justify-center'
+        >
+          Finalize Voting
+        </button>
+      </div>
+    </div>
+          </main>
     </>
   )
 }

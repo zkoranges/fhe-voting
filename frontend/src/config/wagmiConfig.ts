@@ -30,6 +30,7 @@ const fhenix = {
   nativeCurrency: { name: 'FHE', symbol: 'tFHE', decimals: 18 },
   rpcUrls: {
     default: { http: ['https://api.testnet.fhenix.zone:7747'] },
+    // default: { http: ['http://127.0.0.1:42069'] },
   },
   blockExplorers: {
     default: { name: 'Explorer', url: 'https://explorer.testnet.fhenix.zone' },
@@ -49,6 +50,7 @@ const fhenix = {
   },
 } as const satisfies Chain
 
+
 export const wagmiConfig = createConfig({
   chains: [fhenix],
   ssr: true,
@@ -59,5 +61,8 @@ export const wagmiConfig = createConfig({
   },
 })
 
+// testnet
+export const votingAddress = "0xD1Be29f96d6Ce44950658531B3E3eD1a5AEA1AA0"
 
-export const votingAddress = "0x8Ca7Fa9f769bEec27b600FE815B6eC1765D66828"
+// localhost
+// export const votingAddress = "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2"

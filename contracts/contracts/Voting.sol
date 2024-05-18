@@ -70,7 +70,7 @@ contract Voting is Permissioned {
 
     function winning() public view returns (uint8, uint16) {
         // TODO check time
-        require(voteEndTime < block.timestamp, "voting is still in progress!");
+        // require(voteEndTime < block.timestamp, "voting is still in progress!");
         return (FHE.decrypt(_winningOption), FHE.decrypt(_winningTally));
     }
 

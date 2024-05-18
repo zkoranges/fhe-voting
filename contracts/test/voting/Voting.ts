@@ -68,6 +68,7 @@ describe("Unit tests", function () {
     it("Should allow me to vote", async function () {
       let encrypted1 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
       let encrypted3 = await this.instance.instance.encrypt(3, EncryptionTypes.uint8);
+      console.log("Encrypted vote 1: ", encrypted1);
 
       await this.voting.connect(this.signers.admin).vote(encrypted1)
       await this.voting.connect(this.user2).vote(encrypted3)

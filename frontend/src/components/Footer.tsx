@@ -6,13 +6,7 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ votingAddress }) => {
-  const { data: blockNumberData } = useBlockNumber({ watch: true });
-  const chainId = useChainId();
 
-  const handleFinalizeVoting = () => {
-    // Add the logic to finalize the voting process
-    console.log('Finalize Voting button clicked');
-  };
 
   return (
     <div className='fixed bottom-0 w-full flex justify-center p-4 bg-gradient-to-b '>
