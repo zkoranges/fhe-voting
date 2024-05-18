@@ -13,7 +13,7 @@
     "removeComments": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "target": "es2020"
   },
   "exclude": ["node_modules"],

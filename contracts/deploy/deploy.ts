@@ -18,17 +18,18 @@ const func: DeployFunction = async function () {
         return;
     }
   }
+  // const voting = await Voting.connect(contractOwner).deploy();
 
-  const counter = await deploy("Counter", {
+  const voting = await deploy("Voting", {
     from: signer.address,
-    args: [],
+    args: ["Proposal", ["Option 1", "Option 2"], 100000],
     log: true,
     skipIfAlreadyDeployed: false,
   });
 
-  console.log(`Counter contract: `, counter.address);
+  console.log(`Voting contract: `, voting.address);
 };
 
 export default func;
-func.id = "deploy_counter";
-func.tags = ["Counter"];
+func.id = "deploy_voting";
+func.tags = ["Voting"];
