@@ -8,7 +8,7 @@ import Footer from '../components/Footer'; // Adjust the import path as needed
 import votingAbi from '../abi/Voting.json';
 import { ethers } from 'ethers';
 
-//// CLIENT TO SIGNER //// 
+//// ======== CLIENT TO SIGNER ======== //// 
 import { providers } from 'ethers'
 import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport } from 'viem'
@@ -31,9 +31,9 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: client } = useConnectorClient<Config>({ chainId })
   return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
 }
-//// END CLIENT TO SIGNER /// 
+//// ======== END CLIENT TO SIGNER ======== /// 
 
-/// CLIENT TO PROVIDER ///
+/// ======== CLIENT TO PROVIDER ========  ///
 import { useClient } from 'wagmi'
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client
@@ -58,7 +58,7 @@ export function useEthersProvider({
   const client = useClient<Config>({ chainId })
   return useMemo(() => (client ? clientToProvider(client) : undefined), [client])
 }
-/// END CLIENT TO PROVIDER ///
+/// ======== END CLIENT TO PROVIDER ======== ///
 
 export default function LandingPage() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -101,7 +101,7 @@ export default function LandingPage() {
     }
     console.log('Selected Option:', selectedOption);
 
-    // Here, you would typically send the selected option to your backend or blockchain
+    // Here we need to encrypt the vote and send it to the contract
 
     // Set the submitted state to true
     setIsSubmitted(true);

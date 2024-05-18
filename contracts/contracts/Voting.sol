@@ -56,6 +56,7 @@ contract Voting is Permissioned {
     }
 
     function finalize() public {
+        // TODO check time
         //require(voteEndTime < block.timestamp, "voting is still in progress!");
 
         _winningOption = _encOptions[0];
@@ -68,6 +69,7 @@ contract Voting is Permissioned {
     }
 
     function winning() public view returns (uint8, uint16) {
+        // TODO check time
         require(voteEndTime < block.timestamp, "voting is still in progress!");
         return (FHE.decrypt(_winningOption), FHE.decrypt(_winningTally));
     }
@@ -79,6 +81,7 @@ contract Voting is Permissioned {
         return FHE.sealoutput(_votes[msg.sender], signature.publicKey);
     }
 
+    // TODO this doesn't check anything
     function _requireValid(euint8 encryptedVote) internal pure returns (ebool) {
         // Make sure that: (0 <= vote <= options.length)
         return encryptedVote.lte(FHE.asEuint8(MAX_OPTIONS - 1));
