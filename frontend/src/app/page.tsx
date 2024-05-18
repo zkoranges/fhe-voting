@@ -8,14 +8,57 @@ import Footer from '../components/Footer'; // Adjust the import path as needed
 import votingAbi from '../abi/Voting.json';
 import { ethers } from 'ethers';
 
-// Landing page localhost:3000/
+//// CLIENT TO SIGNER //// 
+import { providers } from 'ethers'
+import { useMemo } from 'react'
+import type { Account, Chain, Client, Transport } from 'viem'
+import { Config, useConnectorClient } from 'wagmi'
 
-const votingContractConfig = {
-  address: votingAddress,
-  abi: votingAbi.abi,
-};
+export function clientToSigner(client: Client<Transport, Chain, Account>) {
+  const { account, chain, transport } = client
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  const provider = new providers.Web3Provider(transport, network)
+  const signer = provider.getSigner(account.address)
+  return signer
+}
 
-console.log(votingContractConfig)
+/** Hook to convert a Viem Client to an ethers.js Signer. */
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: client } = useConnectorClient<Config>({ chainId })
+  return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
+}
+//// END CLIENT TO SIGNER /// 
+
+/// CLIENT TO PROVIDER ///
+import { useClient } from 'wagmi'
+export function clientToProvider(client: Client<Transport, Chain>) {
+  const { chain, transport } = client
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  if (transport.type === 'fallback')
+    return new providers.FallbackProvider(
+      (transport.transports as ReturnType<Transport>[]).map(
+        ({ value }) => new providers.JsonRpcProvider(value?.url, network),
+      ),
+    )
+  return new providers.JsonRpcProvider(transport.url, network)
+}
+
+/** Hook to convert a viem Client to an ethers.js Provider. */
+export function useEthersProvider({
+  chainId,
+}: { chainId?: number | undefined } = {}) {
+  const client = useClient<Config>({ chainId })
+  return useMemo(() => (client ? clientToProvider(client) : undefined), [client])
+}
+/// END CLIENT TO PROVIDER ///
 
 export default function LandingPage() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -24,14 +67,31 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // load proposal
-  const { data: proposalData } = useReadContract({
-    ...votingContractConfig,
-    functionName: 'proposal',
-    args: [],
-  });
+  // Can we get a provider and signer please? 
+  const signer = useEthersSigner()
+  // console.log('Signer:', signer)
+  const provider = useEthersProvider()
+  // console.log('Provider:', provider)
 
-  console.log('proposalData:', proposalData);
+  // Create a contract instance
+  const votingContract = new ethers.Contract(votingAddress, votingAbi['abi'], provider);  
+
+  // Fetch the proposal name
+  useEffect(() => {
+    const fetchProposalName = async () => {
+      try {
+        const name = await votingContract.proposal();
+        console.log('Proposal Name:', name);
+        setProposalName(name);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProposalName();
+  }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();

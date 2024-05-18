@@ -50,11 +50,11 @@ const fhenix = {
 } as const satisfies Chain
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, fhenix],
+  chains: [fhenix],
   ssr: true,
   connectors: connectors,
   transports: {
-    [mainnet.id]: http(),
+    // [mainnet.id]: http(),
     [fhenix.id]: http(),
   },
 })
