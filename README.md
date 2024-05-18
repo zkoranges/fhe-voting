@@ -5,7 +5,6 @@ Run voting campaigns that **protect voter choices** using FHE (Fully Homomorphic
 
 This repository contains a full-stack blockchain voting application that leverages Fhenix Fully Homomorphic Encryption (FHE) to ensure the confidentiality of votes. 
 
-
 While the election creator can determine who is eligible to vote, they cannot view individual votes. The results are revealed only after the election concludes.
 
 ## Features
@@ -16,6 +15,10 @@ While the election creator can determine who is eligible to vote, they cannot vi
 
 To check it out, simply check the deployed app on Fhenix Tesnet : xxx
 
+## Advantages over other approaches that use ZK
+- FHE Voting doesn't require custom circuits that would need a complete re-think when adding extra functionality. 
+- Minimal number of steps: campaign creation, voting and finalization which decrypts the results.
+- In comparison to MACI (privacy scaling explorations): although MACI's approach reduces the effectiveness of bribery, it requires a trusted coordinator that can decrypt the votes. Our approach doesn't require a trusted coordinator, meaning the votes a truly private.
 
 ## Running your own voting campaign
 This procedure explains how to run a voting campaign on localhost. This can be replicated on any fhenix compatible network. 

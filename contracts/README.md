@@ -55,8 +55,6 @@ pnpm task:addCount --amount 5
 pnpm task:getCount # => 6
 ```
 
-TODO: frontend
-
 ## More Info
 
 To learn more about the Fhenix Hardhat plugin, check out the [Fhenix Hardhat Plugin Repository](https://github.com/FhenixProtocol/fhenix-hardhat-plugin).

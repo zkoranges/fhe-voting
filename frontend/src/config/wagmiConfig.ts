@@ -4,7 +4,7 @@ import { connectorsForWallets, getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { phantomWallet } from '@rainbow-me/rainbowkit/wallets'
 
 const { wallets } = getDefaultWallets()
-const appName = 'evm-bootstrap-repo'
+const appName = 'FHE Voting'
 const projectId = 'walletConnectId(NeedsReplacing)'
 
 const connectors = connectorsForWallets(

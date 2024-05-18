@@ -27,9 +27,6 @@ contract Voting is Permissioned {
 
     mapping(address => euint8) internal _votes;
 
-    // true if voting is over, false if ongoing
-    bool public finalized;
-
     constructor(string memory _proposal, string[] memory _options, uint votingPeriod, address[] memory _voters) {
         require(options.length <= MAX_OPTIONS, "too many options!");
 
@@ -44,11 +41,9 @@ contract Voting is Permissioned {
 
     function vote(inEuint8 memory voteBytes) public {
         // require voter to be in the list of voters
-        if(voters[msg.sender] == false) {
-            revert("You are not allowed to vote!");
-        }
+        require(voters[msg.sender]);
 
-        //require(block.timestamp < voteEndTime, "voting is over!");
+        require(block.timestamp < voteEndTime, "voting is over!");
         require(!FHE.isInitialized(_votes[msg.sender]), "already voted!");
         euint8 encryptedVote = FHE.asEuint8(voteBytes); // Cast bytes into an encrypted type
 
@@ -59,9 +54,7 @@ contract Voting is Permissioned {
     }
 
     function finalize() public {
-        // TODO check time
-        //require(voteEndTime < block.timestamp, "voting is still in progress!");
-        finalized = true;
+        require(voteEndTime < block.timestamp, "voting is still in progress!");
 
         _winningOption = _encOptions[0];
         _winningTally = _tally[0];
@@ -73,9 +66,7 @@ contract Voting is Permissioned {
     }
 
     function winning() public view returns (uint8, uint16) {
-        // TODO check time
-        // require(voteEndTime < block.timestamp, "voting is still in progress!");
-        require(finalized, "voting is still in progress!");
+        require(voteEndTime < block.timestamp, "voting is still in progress!");
         return (FHE.decrypt(_winningOption), FHE.decrypt(_winningTally));
     }
 
@@ -86,8 +77,8 @@ contract Voting is Permissioned {
         return FHE.sealoutput(_votes[msg.sender], signature.publicKey);
     }
 
-    // TODO this doesn't check anything
     function _requireValid(euint8 encryptedVote) internal pure returns (ebool) {
+        // TODO actually check the vote is valid.
         // Make sure that: (0 <= vote <= options.length)
         return encryptedVote.lte(FHE.asEuint8(MAX_OPTIONS - 1));
         //FHE.req(isValid);
