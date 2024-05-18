@@ -7,13 +7,14 @@ import { EncryptionTypes } from "fhenixjs";
 import { ethers } from "hardhat";
 import { parseEther } from "ethers";
 
-// Helper function to move time forward
-async function increaseTime(seconds: number) {
-  await hre.network.provider.send("evm_increaseTime", [seconds]);
-  await hre.network.provider.send("evm_mine", []);
-}
+// // Doesn't work
+// // Helper function to move time forward
+// async function increaseTime(seconds: number) {
+//   await hre.network.provider.send("evm_increaseTime", [seconds]);
+//   await hre.network.provider.send("evm_mine", []);
+// }
 
-function sleep(ms) {
+function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -32,14 +33,27 @@ describe("Unit tests", function () {
     // set admin account/signer
     const signers = await hre.ethers.getSigners();
     this.signers.admin = signers[0];
-    this.user1 = signers[2];
+    this.user1 = signers[1];
+    this.user2 = signers[2];
+    this.user3 = signers[3];
 
-    // print admin and user1
     console.log("Admin: ", this.signers.admin.address);
     console.log("User1: ", this.user1.address);
+    console.log("User2: ", this.user2.address);
+    console.log("User3: ", this.user3.address);
 
-    const tx = await this.signers.admin.sendTransaction({
+    await this.signers.admin.sendTransaction({
       to: this.user1.address,
+      value: parseEther("0.1"),
+    });
+
+    await this.signers.admin.sendTransaction({
+      to: this.user2.address,
+      value: parseEther("0.1"),
+    });
+
+    await this.signers.admin.sendTransaction({
+      to: this.user3.address,
       value: parseEther("0.1"),
     });
   });
@@ -58,14 +72,23 @@ describe("Unit tests", function () {
       await this.voting.connect(this.signers.admin).vote(encrypted3)
 
       let encrypted1 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
+    
+      await this.voting.connect(this.user2).vote(encrypted1)
+
+      // should not count! user1 and user 3 are not registered
       await this.voting.connect(this.user1).vote(encrypted1)
+      await this.voting.connect(this.user3).vote(encrypted1)
 
       // check if admin and user1 are able to vote
       const canAdminVote = await this.voting.voters(this.signers.admin.address);
       const canUser1Vote = await this.voting.voters(this.user1.address);
+      const canUser2Vote = await this.voting.voters(this.user2.address);
+      const canUser3Vote = await this.voting.voters(this.user3.address);
 
       console.log("Can admin vote: ", canAdminVote.toString());
       console.log("Can user1 vote: ", canUser1Vote.toString());
+      console.log("Can user2 vote: ", canUser2Vote.toString());
+      console.log("Can user3 vote: ", canUser3Vote.toString());
 
       console.log("sleeping for 1 second")
       await sleep(1000);
