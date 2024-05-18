@@ -34,7 +34,7 @@ contract Voting is Permissioned {
         options = _options;
         voteEndTime = block.timestamp + votingPeriod;
 
-        for (uint i = 0; i < _voters.length; i++) {
+        for (uint i; i < _voters.length; i++) {
             voters[_voters[i]] = true;
         }
     }
