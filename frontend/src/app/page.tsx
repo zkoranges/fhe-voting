@@ -40,8 +40,6 @@ export default function LandingPage() {
     setFheClient(client);
   };
 
-  // console.log('FHE Client:', fheClient)
-
   const getFheClient = () => {
     return fheClient;
   };
@@ -104,8 +102,6 @@ export default function LandingPage() {
 
     fetchFinalized();
   }, [finalizedClicked]);
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -172,12 +168,17 @@ export default function LandingPage() {
 
         {/* FORM */}
         {finalized ? (
-        <div className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md">
+          <>
+        <div className="w-full max-w-md bg-gray-100 p-6 mt-10 rounded-lg shadow-md">
           <p className="text-center text-green-500 font-bold">Voting has been finalized!</p>
           <p className="text-center text-gray-700">{proposalName}</p>
           <p className="text-center text-gray-700">With {winningValues.uint16Value} Votes...</p>
           <p className="text-center text-gray-700 font-bold">The Winning Character is: {options[winningValues.uint8Value]} 🎉</p>
         </div>
+        <div className="py-20">
+          <img src="/fhe-rainbow.jpeg" alt="FHE Rainbow" style={{ width: '500px', height: '300px' }} />
+        </div>
+          </>
       ) : (
         <>
           {isSubmitted ? (
@@ -245,7 +246,7 @@ export default function LandingPage() {
       )}
 
         {/* Footer */}
-        <div className='fixed bottom-0 w-full flex justify-center py-10 bg-gradient-to-b '>
+    <div className='fixed bottom-0 w-full flex justify-center py-10 bg-gradient-to-b '>
       <div className='flex space-x-5'>
         <p className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center text-xs'>
           Voting Contract: {votingAddress}
