@@ -67,16 +67,14 @@ describe("Unit tests", function () {
     });
 
     it("Should allow me to vote", async function () {
-      let encrypted3 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
-
-      await this.voting.connect(this.signers.admin).vote(encrypted3)
-
       let encrypted1 = await this.instance.instance.encrypt(1, EncryptionTypes.uint8);
-    
-      await this.voting.connect(this.user2).vote(encrypted1)
+      let encrypted3 = await this.instance.instance.encrypt(3, EncryptionTypes.uint8);
 
-      // should not count! user1 and user 3 are not registered
-      await this.voting.connect(this.user1).vote(encrypted1)
+      await this.voting.connect(this.signers.admin).vote(encrypted1)
+      await this.voting.connect(this.user2).vote(encrypted3)
+      await this.voting.connect(this.user1).vote(encrypted3)
+
+      // should not count! user 3 is not registered
       await this.voting.connect(this.user3).vote(encrypted1)
 
       // check if admin and user1 are able to vote
@@ -97,6 +95,9 @@ describe("Unit tests", function () {
       const result = await this.voting.winning();
       const winnerIndex = result[0];
       const winnerVotes = result[1];
+
+      expect(winnerIndex).to.equal(3);
+      expect(winnerVotes).to.equal(2);
 
       console.log("winnerIndex: ", winnerIndex.toString());
       console.log("winnerVotes: ", winnerVotes.toString());
