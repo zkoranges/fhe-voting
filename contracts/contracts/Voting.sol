@@ -27,6 +27,9 @@ contract Voting is Permissioned {
 
     mapping(address => euint8) internal _votes;
 
+    // true if voting is over, false if ongoing
+    bool public finalized;
+
     constructor(string memory _proposal, string[] memory _options, uint votingPeriod, address[] memory _voters) {
         require(options.length <= MAX_OPTIONS, "too many options!");
 
@@ -58,6 +61,7 @@ contract Voting is Permissioned {
     function finalize() public {
         // TODO check time
         //require(voteEndTime < block.timestamp, "voting is still in progress!");
+        finalized = true;
 
         _winningOption = _encOptions[0];
         _winningTally = _tally[0];
@@ -71,6 +75,7 @@ contract Voting is Permissioned {
     function winning() public view returns (uint8, uint16) {
         // TODO check time
         // require(voteEndTime < block.timestamp, "voting is still in progress!");
+        require(finalized, "voting is still in progress!");
         return (FHE.decrypt(_winningOption), FHE.decrypt(_winningTally));
     }
 
