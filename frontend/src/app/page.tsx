@@ -17,6 +17,7 @@ export default function LandingPage() {
   const [error, setError] = useState<Error | null>(null);
   const [fheClient, setFheClient] = useState(null);
   const [finalizedClicked, setFinalizedClicked] = useState(false);
+  const [finalized, setFinalized] = useState<boolean>(false);
   const [winningValues, setWinningValues] = useState({ uint8Value: null, uint16Value: null });
 
   const { data: blockNumberData } = useBlockNumber({ watch: true });
@@ -86,6 +87,25 @@ export default function LandingPage() {
     fetchProposalName();
   }, []);
 
+  useEffect(() => {
+    const fetchFinalized = async () => {
+      try {
+        const finalized = await votingContract.finalized();
+        console.log('Finalized?:', finalized);
+        setFinalized(finalized);
+
+        if (finalized) {
+          fetchWinningValues();
+        }
+      } catch (error) {
+        console.error('Error fetching finalized status:', error);
+      } 
+    };
+
+    fetchFinalized();
+  }, []);
+
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -151,7 +171,7 @@ export default function LandingPage() {
         </div>
 
         {/* FORM */}
-        {finalizedClicked ? (
+        {finalizedClicked || finalized ? (
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
           <p className="text-center text-green-500 font-bold">Voting has been finalized!</p>
           <p className="text-center text-gray-700">With {winningValues.uint16Value} Votes...</p>
@@ -245,12 +265,14 @@ export default function LandingPage() {
             <p>{blockNumberData ? Number(blockNumberData) : 'Loading...'}</p>
           </div>
         </div>
-        <button
-          onClick={handleFinalizeVoting}
-          className='rounded-xl text-xs border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center justify-center'
-        >
-          Finalize Voting
-        </button>
+        {!finalized && (
+            <button
+              onClick={handleFinalizeVoting}
+              className='rounded-xl text-xs border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center justify-center'
+            >
+              Finalize Voting
+            </button>
+          )}
       </div>
     </div>
           </main>
