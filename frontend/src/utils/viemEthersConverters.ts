@@ -1,4 +1,4 @@
-//// ======== CLIENT TO SIGNER ======== //// 
+//// ======== CLIENT TO SIGNER ======== ////
 import { providers } from 'ethers'
 import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport } from 'viem'
@@ -21,7 +21,7 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: client } = useConnectorClient<Config>({ chainId })
   return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
 }
-//// ======== END CLIENT TO SIGNER ======== /// 
+//// ======== END CLIENT TO SIGNER ======== ///
 
 /// ======== CLIENT TO PROVIDER ========  ///
 import { useClient } from 'wagmi'
@@ -42,9 +42,7 @@ export function clientToProvider(client: Client<Transport, Chain>) {
 }
 
 /** Hook to convert a viem Client to an ethers.js Provider. */
-export function useEthersProvider({
-  chainId,
-}: { chainId?: number | undefined } = {}) {
+export function useEthersProvider({ chainId }: { chainId?: number | undefined } = {}) {
   const client = useClient<Config>({ chainId })
   return useMemo(() => (client ? clientToProvider(client) : undefined), [client])
 }

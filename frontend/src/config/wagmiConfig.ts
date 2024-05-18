@@ -23,7 +23,6 @@ const connectors = connectorsForWallets(
 
 import type { Chain } from 'viem'
 
-
 const fhenix = {
   id: 42069,
   name: 'Fhenix Testnet',
@@ -43,13 +42,13 @@ const fhenix = {
       address: '0x0',
       blockCreated: 16773775,
     },
-    multicall3: { // not supported?
-      address: "0x",
+    multicall3: {
+      // not supported?
+      address: '0x',
       blockCreated: 8123891232939923,
     },
   },
 } as const satisfies Chain
-
 
 export const wagmiConfig = createConfig({
   chains: [fhenix],
@@ -62,7 +61,7 @@ export const wagmiConfig = createConfig({
 })
 
 // testnet
-export const votingAddress = "0xCEc1e86a57f2862E06a7Af5f62449c137d36077E"
+export const votingAddress = '0xCEc1e86a57f2862E06a7Af5f62449c137d36077E'
 
 // localhost
 // export const votingAddress = "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2"
