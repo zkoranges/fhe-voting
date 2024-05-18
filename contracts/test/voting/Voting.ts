@@ -4,6 +4,8 @@ import type { Signers } from "../types";
 import { deployVotingFixture } from "./Voting.fixture";
 import hre from "hardhat";
 import { EncryptionTypes } from "fhenixjs";
+import { ethers } from "hardhat";
+import { parseEther } from "ethers";
 
 // Helper function to move time forward
 async function increaseTime(seconds: number) {
@@ -30,6 +32,12 @@ describe("Unit tests", function () {
     // set admin account/signer
     const signers = await hre.ethers.getSigners();
     this.signers.admin = signers[0];
+    this.user1 = signers[1];
+
+    const tx = await this.signers.admin.sendTransaction({
+      to: this.user1.address,
+      value: parseEther("1.0"),
+    });
   });
 
   describe("Voting", function () {
@@ -41,17 +49,23 @@ describe("Unit tests", function () {
     });
 
     it("Should allow me to vote", async function () {
-      let encrypted = await this.instance.instance.encrypt(0, EncryptionTypes.uint8);
-      await expect(this.voting.vote(encrypted)).to.be.ok;
+      let encrypted3 = await this.instance.instance.encrypt(3, EncryptionTypes.uint8);
 
-      // await increaseTime(10000);
+      await this.voting.connect(this.signers.admin).vote(encrypted3)
 
-      await expect(this.voting.vote(encrypted)).to.be.ok;
-      
-      // reverts for some reason
-      // console.log("sleeping for 2 seconds")
-      // await sleep(2000);
-      // await this.voting.finalize()
+      // let encrypted1 = await this.instance.instance.encrypt(0, EncryptionTypes.uint8);
+      await this.voting.connect(this.user1).vote(encrypted3)
+
+      // console.log("sleeping for 1 seconds")
+      await sleep(1000);
+      await this.voting.finalize()
+
+      const result = await this.voting.winning();
+      const winnerIndex = result[0];
+      const winnerVotes = result[1];
+
+      console.log("winnerIndex: ", winnerIndex.toString());
+      console.log("winnerVotes: ", winnerVotes.toString());
     });
   });
 });
