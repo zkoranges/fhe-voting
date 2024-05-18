@@ -7,8 +7,7 @@ import { EncryptionTypes } from "fhenixjs";
 import { ethers } from "hardhat";
 import { parseEther } from "ethers";
 
-// // Doesn't work
-// // Helper function to move time forward
+// // Helper function to move time forward - Doesn't work for some reason
 // async function increaseTime(seconds: number) {
 //   await hre.network.provider.send("evm_increaseTime", [seconds]);
 //   await hre.network.provider.send("evm_mine", []);
