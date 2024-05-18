@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useBlockNumber } from 'wagmi'
 import { useChainId } from 'wagmi'
+import { votingAddress } from '@/config/wagmiConfig'
 
 // Landing page localhost:3000/
 
@@ -17,7 +18,7 @@ export default function LandingPage() {
       <main className='flex min-h-screen flex-col items-center justify-center'>
         <div className='flex space-x-5'>
           <p className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center'>
-            EVM-FE-Bootstrap Repository
+            Voting Contract Address: {votingAddress}
           </p>
           <div className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex flex-col'>
             <p>Watching Blocks on {chainId ? chainId : 'Loading...'}</p>
@@ -36,11 +37,6 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <Link href='/examplePage'>
-          <div className='mt-3 rounded-xl border border-slate-500 bg-gradient-to-b p-3 hover:from-zinc-800/40 hover:to-zinc-500/50'>
-            Example Page
-          </div>
-        </Link>
       </main>
     </>
   )

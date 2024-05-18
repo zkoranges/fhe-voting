@@ -58,3 +58,6 @@ export const wagmiConfig = createConfig({
     [fhenix.id]: http(),
   },
 })
+
+
+export const votingAddress = "0x8Ca7Fa9f769bEec27b600FE815B6eC1765D66828"
