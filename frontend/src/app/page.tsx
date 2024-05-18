@@ -103,7 +103,7 @@ export default function LandingPage() {
     };
 
     fetchFinalized();
-  }, []);
+  }, [finalizedClicked]);
 
 
 
@@ -171,11 +171,12 @@ export default function LandingPage() {
         </div>
 
         {/* FORM */}
-        {finalizedClicked || finalized ? (
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+        {finalized ? (
+        <div className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md">
           <p className="text-center text-green-500 font-bold">Voting has been finalized!</p>
+          <p className="text-center text-gray-700">{proposalName}</p>
           <p className="text-center text-gray-700">With {winningValues.uint16Value} Votes...</p>
-          <p className="text-center text-gray-700">The Winning Character is: {options[winningValues.uint8Value]}</p>
+          <p className="text-center text-gray-700 font-bold">The Winning Character is: {options[winningValues.uint8Value]} 🎉</p>
         </div>
       ) : (
         <>
