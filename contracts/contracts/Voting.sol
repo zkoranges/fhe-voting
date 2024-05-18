@@ -33,7 +33,7 @@ contract Voting is Permissioned {
     }
 
     function vote(inEuint8 memory voteBytes) public {
-        require(block.timestamp < voteEndTime, "voting is over!");
+        //require(block.timestamp < voteEndTime, "voting is over!");
         require(!FHE.isInitialized(_votes[msg.sender]), "already voted!");
         euint8 encryptedVote = FHE.asEuint8(voteBytes); // Cast bytes into an encrypted type
 
@@ -44,7 +44,7 @@ contract Voting is Permissioned {
     }
 
     function finalize() public {
-        require(voteEndTime < block.timestamp, "voting is still in progress!");
+        //require(voteEndTime < block.timestamp, "voting is still in progress!");
 
         _winningOption = _encOptions[0];
         _winningTally = _tally[0];
