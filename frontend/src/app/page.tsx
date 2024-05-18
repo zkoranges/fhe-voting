@@ -1,15 +1,12 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { useBlockNumber, useChainId, useReadContract } from 'wagmi';
-import Link from 'next/link';
+import { useBlockNumber, useChainId } from 'wagmi';
 
 import { votingAddress } from '@/config/wagmiConfig';
-import Footer from '../components/Footer'; // Adjust the import path as needed
 import votingAbi from '../abi/Voting.json';
 import { ethers } from 'ethers';
 import { FhenixClient } from 'fhenixjs';
 import { useEthersProvider, useEthersSigner } from '../utils/viemEthersConverters'; // Adjust the import path as needed
-import type { SupportedProvider } from "fhenixjs";
 
 //// START OF THE COMPONENT //// 
 export default function LandingPage() {
@@ -123,12 +120,12 @@ export default function LandingPage() {
       const tx = await votingContract.connect(signer).finalize();
       await tx.wait();
       console.log("Voting finalized:", tx);
-  
-      setFinalizedClicked(true);
-  
-      fetchWinningValues()
     } catch (error) {
       console.error("Error finalizing voting:", error);
+    } finally {
+      console.log("Finalize voting completed");
+      setFinalizedClicked(true);
+      fetchWinningValues()
     }
   };
 
@@ -142,78 +139,92 @@ export default function LandingPage() {
     }
   };
 
+  // TODO fetch voting options
+  // These can be fetched from the contract as well, but for simplicity and time limits, we are hardcoding them here
+  const options = ["Patrick Star", "Sandy Cheeks", "Mr. Krabs"]
+
   return (
     <>
       <main className='fixed w-full flex flex-col items-center justify-center p-10 bg-gradient-to-b '>
         <div>
           <h1 className='text-3xl font-bold py-5'>FHE Voting</h1>
-          <p>Name of proposal: {proposalName}</p>
         </div>
 
-        {isSubmitted ? (
-          <div className='w-full max-w-md bg-white p-6 rounded-lg shadow-md'>
-            <p className='text-center text-green-500 font-bold'>Your vote has been submitted!</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className='w-full max-w-md bg-gradient-to-b  p-6 rounded-lg shadow-md'>
-            <div className='mb-4'>
-              <p className='block text-gray-100 text-sm font-bold mb-2'>Select an option:</p>
-              <div className='flex items-center mb-2'>
-                <input
-                  id='option0'
-                  type='radio'
-                  name='voteOption'
-                  value='0'
-                  checked={selectedOption === 0}
-                  onChange={() => setSelectedOption(0)}
-                  className='mr-2 leading-tight'
-                />
-                <label htmlFor='option0' className='text-gray-100'>
-                  Option 0
-                </label>
-              </div>
-              <div className='flex items-center mb-2'>
-                <input
-                  id='option1'
-                  type='radio'
-                  name='voteOption'
-                  value='1'
-                  checked={selectedOption === 1}
-                  onChange={() => setSelectedOption(1)}
-                  className='mr-2 leading-tight'
-                />
-                <label htmlFor='option1' className='text-gray-100'>
-                  Option 1
-                </label>
-              </div>
-              <div className='flex items-center'>
-                <input
-                  id='option2'
-                  type='radio'
-                  name='voteOption'
-                  value='2'
-                  checked={selectedOption === 2}
-                  onChange={() => setSelectedOption(2)}
-                  className='mr-2 leading-tight'
-                />
-                <label htmlFor='option2' className='text-gray-100'>
-                  Option 2
-                </label>
-              </div>
+        {/* FORM */}
+        {finalizedClicked ? (
+        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+          <p className="text-center text-green-500 font-bold">Voting has been finalized!</p>
+          <p className="text-center text-gray-700">With {winningValues.uint16Value} Votes...</p>
+          <p className="text-center text-gray-700">The Winning Character is: {options[winningValues.uint8Value]}</p>
+        </div>
+      ) : (
+        <>
+          {isSubmitted ? (
+            <div className='w-full max-w-md bg-white p-6 rounded-lg shadow-md'>
+              <p className='text-center text-green-500 font-bold'>Your vote has been submitted!</p>
             </div>
-            <div className='flex items-center justify-between'>
-              <button
-                type='submit'
-                className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 text-white font-bold focus:outline-none focus:shadow-outline'
-              >
-                Submit Vote
-              </button>
-            </div>
-          </form>
-        )}
+          ) : (
+            <form onSubmit={handleSubmit} className='w-full max-w-md bg-gradient-to-b  p-6 rounded-lg shadow-md'>
+              <div className='mb-4'>
+                <p className='block text-gray-100 text-sm font-bold mb-2'>{proposalName}</p>
+                <div className='flex items-center mb-2'>
+                  <input
+                    id='option0'
+                    type='radio'
+                    name='voteOption'
+                    value='0'
+                    checked={selectedOption === 0}
+                    onChange={() => setSelectedOption(0)}
+                    className='mr-2 leading-tight'
+                  />
+                  <label htmlFor='option0' className='text-gray-100'>
+                    {options[0]}
+                  </label>
+                </div>
+                <div className='flex items-center mb-2'>
+                  <input
+                    id='option1'
+                    type='radio'
+                    name='voteOption'
+                    value='1'
+                    checked={selectedOption === 1}
+                    onChange={() => setSelectedOption(1)}
+                    className='mr-2 leading-tight'
+                  />
+                  <label htmlFor='option1' className='text-gray-100'>
+                  {options[1]}
+                  </label>
+                </div>
+                <div className='flex items-center'>
+                  <input
+                    id='option2'
+                    type='radio'
+                    name='voteOption'
+                    value='2'
+                    checked={selectedOption === 2}
+                    onChange={() => setSelectedOption(2)}
+                    className='mr-2 leading-tight'
+                  />
+                  <label htmlFor='option2' className='text-gray-100'>
+                  {options[2]}
+                  </label>
+                </div>
+              </div>
+              <div className='flex items-center justify-between'>
+                <button
+                  type='submit'
+                  className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 text-white font-bold focus:outline-none focus:shadow-outline'
+                >
+                  Submit Vote
+                </button>
+              </div>
+            </form>
+          )}
+        </>
+      )}
 
         {/* Footer */}
-        <div className='fixed bottom-0 w-full flex justify-center p-4 bg-gradient-to-b '>
+        <div className='fixed bottom-0 w-full flex justify-center py-10 bg-gradient-to-b '>
       <div className='flex space-x-5'>
         <p className='rounded-xl border border-slate-500 bg-gradient-to-b from-zinc-800/30 to-zinc-500/40 p-4 flex items-center text-xs'>
           Voting Contract: {votingAddress}

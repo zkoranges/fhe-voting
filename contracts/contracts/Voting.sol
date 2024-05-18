@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause-Clear
-// WARNING THIS IS An EXPERIMENTAL CONTRACT AND IS NOT READY FOR PRODUCTION USE
+// WARNING THIS IS AN EXPERIMENTAL CONTRACT AND IS NOT READY FOR PRODUCTION USE
 
 pragma solidity >=0.8.19 <0.9.0;
 
@@ -27,6 +27,8 @@ contract Voting is Permissioned {
 
     mapping(address => euint8) internal _votes;
 
+    bool public finalized;
+
     constructor(string memory _proposal, string[] memory _options, uint votingPeriod, address[] memory _voters) {
         require(options.length <= MAX_OPTIONS, "too many options!");
 
@@ -45,6 +47,8 @@ contract Voting is Permissioned {
 
         require(block.timestamp < voteEndTime, "voting is over!");
         require(!FHE.isInitialized(_votes[msg.sender]), "already voted!");
+        require(!finalized, "voting is finalized!");
+
         euint8 encryptedVote = FHE.asEuint8(voteBytes); // Cast bytes into an encrypted type
 
         ebool voteValid = _requireValid(encryptedVote);
@@ -55,6 +59,9 @@ contract Voting is Permissioned {
 
     function finalize() public {
         require(voteEndTime < block.timestamp, "voting is still in progress!");
+        require(!finalized, "voting is already finalized!");
+
+        finalized = true;
 
         _winningOption = _encOptions[0];
         _winningTally = _tally[0];
@@ -67,6 +74,7 @@ contract Voting is Permissioned {
 
     function winning() public view returns (uint8, uint16) {
         require(voteEndTime < block.timestamp, "voting is still in progress!");
+        require(finalized, "voting is not finalized!");
         return (FHE.decrypt(_winningOption), FHE.decrypt(_winningTally));
     }
 

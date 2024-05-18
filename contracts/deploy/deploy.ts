@@ -18,11 +18,12 @@ const func: DeployFunction = async function () {
         return;
     }
   }
-  // const voting = await Voting.connect(contractOwner).deploy();
 
+  // Create a really important voting campaign
+  let secondsToVote = 120;
   const voting = await deploy("Voting", {
     from: signer.address,
-    args: ["Who is the best SpongeBob SquarePants character?", ["Patrick Star", "Sandy Cheeks", "Mr. Krabs"], 120, ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"]],
+    args: ["Who is the best SpongeBob SquarePants character?", ["Patrick Star", "Sandy Cheeks", "Mr. Krabs"], secondsToVote, ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"]],
     log: true,
     skipIfAlreadyDeployed: false,
   });

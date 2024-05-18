@@ -10,8 +10,9 @@ While the election creator can determine who is eligible to vote, they cannot vi
 ## Features
 - Confidential Voting: Votes are encrypted using Fhenix FHE, ensuring that they remain confidential. The encrypted votes are posted to a smart contract in Fhenix L2 Rollup. 
 - No Trusted Coordinator: The system does not rely on a trusted third party to coordinate the election or manage votes.
-- Controlled Eligibility: The election creator can specify who is allowed to vote.
+- Controlled Eligibility: The election creator can specify who is allowed to vote and how long does the vote run for.
 - Result Disclosure: Results are only available once the election has ended. No one can decrypt individual votes.
+- This particular implementation serves as a demonstration: voting runs for a certain period of time and each participant may only vote once. However, as you can see in Voting.sol, this behavior can be easily modified in function of the application needs.
 
 To check it out, simply check the deployed app on Fhenix Tesnet : xxx
 
@@ -78,7 +79,6 @@ hardhat deploy
 - Use VotingFactory provided to create endless voting campaigns.
 - Expand the number of voting options beyond the current limit of 4.
 - Improve the robustness and security of the application for production use.
-- Prefer time-limited audits. Current implementation doesn't account for time.
 - Enhance the user interface for better user experience.
 
 ## Contributing

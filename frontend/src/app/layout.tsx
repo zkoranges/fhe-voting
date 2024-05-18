@@ -8,22 +8,10 @@ import ClientProvider from './clientProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'EVM-FE-Boilerplate',
-  description: 'EVM-FE-Boilerplate Description Example',
+  title: 'FHE Voting',
+  description: 'FHE Voting Description Example',
   viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
-  openGraph: {
-    type: 'website',
-    url: 'https://www.seranged.com',
-    title: 'EVM-FE-Boilerplate',
-    description: 'EVM-FE-Boilerplate Description Example',
-  },
-  twitter: {
-    site: '@seranged',
-    creator: '@seranged',
-    title: 'EVM-FE-Boilerplate',
-    description: 'EVM-FE-Boilerplate Description Example',
-  },
 }
 
 export default function RootLayout({
