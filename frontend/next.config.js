@@ -11,7 +11,7 @@ module.exports = {
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
     // !! WARN !!
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   env: {
     ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,

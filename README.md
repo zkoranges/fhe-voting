@@ -14,12 +14,10 @@ While the election creator can determine who is eligible to vote, they cannot vi
 - Result Disclosure: Results are only available once the election has ended. No one can decrypt individual votes.
 - This particular implementation serves as a demonstration: voting runs for a certain period of time and each participant may only vote once. However, as you can see in Voting.sol, this behavior can be easily modified in function of the application needs.
 
-To check it out, simply check the deployed app on Fhenix Tesnet : xxx
-
 ## Advantages over other approaches that use ZK
-- FHE Voting doesn't require custom circuits that would need a complete re-think when adding extra functionality. 
-- Minimal number of steps: campaign creation, voting and finalization which decrypts the results.
 - In comparison to MACI (privacy scaling explorations): although MACI's approach reduces the effectiveness of bribery, it requires a trusted coordinator that can decrypt the votes. Our approach doesn't require a trusted coordinator, meaning the votes a truly private.
+- FHE Voting doesn't require custom circuits (from the applciation perspective) that would need a complete re-think when adding extra functionality. In that sense, this approach is more adaptable.
+- Minimal number of steps: campaign creation, voting and finalization which decrypts the results.
 
 ## Running your own voting campaign
 This procedure explains how to run a voting campaign on localhost. This can be replicated on any fhenix compatible network. 
