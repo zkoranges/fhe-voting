@@ -62,7 +62,7 @@ export const wagmiConfig = createConfig({
 })
 
 // testnet
-export const votingAddress = "0xD1Be29f96d6Ce44950658531B3E3eD1a5AEA1AA0"
+export const votingAddress = "0xc160BF640D293809f0ffDd71B44bA32dBE35E498"
 
 // localhost
 // export const votingAddress = "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2"

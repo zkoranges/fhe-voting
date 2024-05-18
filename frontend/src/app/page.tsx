@@ -19,9 +19,8 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [fheClient, setFheClient] = useState(null);
-  const [isFinalized, setIsFinalized] = useState(false);
+  const [finalizedClicked, setFinalizedClicked] = useState(false);
   const [winningValues, setWinningValues] = useState({ uint8Value: null, uint16Value: null });
-
 
   const { data: blockNumberData } = useBlockNumber({ watch: true });
   const chainId = useChainId();
@@ -119,13 +118,18 @@ export default function LandingPage() {
     // Add the logic to finalize the voting process
     console.log('Finalize Voting button clicked');
     // await votingContract.connect(signer).finalize();
-    const tx = await votingContract.connect(signer).finalize();
-    await tx.wait();
-    console.log("Voting finalized:", tx);
 
-    setIsFinalized(true); // Update the state to indicate voting is finalized
-
-    fetchWinningValues()
+    try {
+      const tx = await votingContract.connect(signer).finalize();
+      await tx.wait();
+      console.log("Voting finalized:", tx);
+  
+      setFinalizedClicked(true);
+  
+      fetchWinningValues()
+    } catch (error) {
+      console.error("Error finalizing voting:", error);
+    }
   };
 
   const fetchWinningValues = async () => {
