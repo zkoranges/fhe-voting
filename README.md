@@ -19,6 +19,11 @@ While the election creator can determine who is eligible to vote, they cannot vi
 - FHE Voting doesn't require custom circuits (from the applciation perspective) that would need a complete re-think when adding extra functionality. In that sense, this approach is more adaptable.
 - Minimal number of steps: campaign creation, voting and finalization which decrypts the results.
 
+<div align="center">
+
+![FHE](https://raw.githubusercontent.com/zkoranges/fhe-voting/main/frontend/public/fhe-rainbow.jpeg)
+</div>
+
 ## Running your own voting campaign
 This procedure explains how to run a voting campaign on localhost. This can be replicated on any fhenix compatible network. 
 
