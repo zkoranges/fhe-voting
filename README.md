@@ -1,4 +1,4 @@
-# Fhenix Voting App
+# FHE Voting App
 
 ## Overview
 Run voting campaigns that **protect voter choices** using FHE (Fully Homomorphic Encryption) **without the need of a trusted coordinator**.
